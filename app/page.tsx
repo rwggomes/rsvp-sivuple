@@ -9,9 +9,9 @@ export default function HomePage() {
   const [companionChildren, setCompanionChildren] = useState(false);
   const [childrenCount, setChildrenCount] = useState<number | "">("");
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+  
     const data = {
       name,
       hasCompanion,
@@ -19,11 +19,24 @@ export default function HomePage() {
       companionChildren,
       childrenCount: companionChildren ? Number(childrenCount || 0) : 0,
     };
-
-    console.log("Form data:", data);
-    alert("Form submitted. Check the browser console to see the data.");
+  
+    const response = await fetch("/api/rsvp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  
+    if (!response.ok) {
+      alert("Erro ao salvar. Tente novamente.");
+      return;
+    }
+  
+    alert("Salvo. Nos vemos lá!");
   };
-
+  
+  
   const resetCompanions = (checked: boolean) => {
     setHasCompanion(checked);
     if (!checked) {
@@ -125,7 +138,7 @@ export default function HomePage() {
                     onChange={(e) => setCompanionPartner(e.target.checked)}
                     style={{ marginRight: "8px" }}
                   />
-                  Companheirx
+                  Conge
                 </label>
 
                 <label style={{ display: "block" }}>
