@@ -66,7 +66,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("Error writing to Google Sheets", err);
     return NextResponse.json(
-      { success: false, error: "Failed to save data" },
+      { success: false, error: "Erro salvando no Google Sheets" },
       { status: 500 }
     );
   }

@@ -10,31 +10,42 @@ export default function HomePage() {
   const [childrenCount, setChildrenCount] = useState<number | "">("");
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-  
-    const data = {
-      name,
-      hasCompanion,
-      companionPartner,
-      companionChildren,
-      childrenCount: companionChildren ? Number(childrenCount || 0) : 0,
-    };
-  
-    const response = await fetch("/api/rsvp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-  
-    if (!response.ok) {
-      alert("Erro ao salvar. Tente novamente.");
-      return;
-    }
-  
-    alert("Salvo. Nos vemos lá!");
+  event.preventDefault();
+
+  const data = {
+    name,
+    hasCompanion,
+    companionPartner,
+    companionChildren,
+    childrenCount: companionChildren ? Number(childrenCount || 0) : 0,
   };
+
+  const response = await fetch("/api/rsvp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  let result: any = null;
+  try {
+    result = await response.json();
+  } catch (e) {
+    console.error("Failed to parse JSON:", e);
+  }
+
+  console.log("Response status:", response.status);
+  console.log("Response body:", result);
+
+  if (!response.ok) {
+    alert(`Erro ao salvar: ${result?.error ?? "erro desconhecido"}`);
+    return;
+  }
+
+  alert("Salvo. Nos vemos lá!");
+};
+
   
   
   const resetCompanions = (checked: boolean) => {
