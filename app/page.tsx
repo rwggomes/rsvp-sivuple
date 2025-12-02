@@ -10,44 +10,32 @@ export default function HomePage() {
   const [childrenCount, setChildrenCount] = useState<number | "">("");
 
   const handleSubmit = async (event: React.FormEvent) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const data = {
-    name,
-    hasCompanion,
-    companionPartner,
-    companionChildren,
-    childrenCount: companionChildren ? Number(childrenCount || 0) : 0,
+    const data = {
+      name,
+      hasCompanion,
+      companionPartner,
+      companionChildren,
+      childrenCount: companionChildren ? Number(childrenCount || 0) : 0,
+    };
+
+    const response = await fetch("/api/rsvp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      alert("Erro ao salvar. Tente novamente.");
+      return;
+    }
+
+    alert("Salvo. Nos vemos lá!");
   };
 
-  const response = await fetch("/api/rsvp", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  let result: any = null;
-  try {
-    result = await response.json();
-  } catch (e) {
-    console.error("Failed to parse JSON:", e);
-  }
-
-  console.log("Response status:", response.status);
-  console.log("Response body:", result);
-
-  if (!response.ok) {
-    alert(`Erro ao salvar: ${result?.error ?? "erro desconhecido"}`);
-    return;
-  }
-
-  alert("Salvo. Nos vemos lá!");
-};
-
-  
-  
   const resetCompanions = (checked: boolean) => {
     setHasCompanion(checked);
     if (!checked) {
@@ -66,15 +54,20 @@ export default function HomePage() {
 
   return (
     <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f5f5f5",
-        padding: "24px",
-      }}
-    >
+  style={{
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "24px",
+    backgroundColor: "#ffffff",
+    backgroundImage: "url('/myphoto.jpg')",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "left bottom",
+    backgroundSize: "550px auto", 
+  }}
+>
+
       <div
         style={{
           background: "#ffffff",
@@ -82,7 +75,7 @@ export default function HomePage() {
           borderRadius: "12px",
           maxWidth: "480px",
           width: "100%",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
           boxSizing: "border-box",
         }}
       >
@@ -91,7 +84,6 @@ export default function HomePage() {
         </h1>
 
         <form onSubmit={handleSubmit}>
-          {/* Name field */}
           <div style={{ marginBottom: "16px" }}>
             <label
               htmlFor="name"
@@ -115,7 +107,6 @@ export default function HomePage() {
             />
           </div>
 
-          {/* Checkbox: Vou levar acompanhante */}
           <div style={{ marginBottom: "16px" }}>
             <label>
               <input
@@ -128,7 +119,6 @@ export default function HomePage() {
             </label>
           </div>
 
-          {/* Companions section */}
           {hasCompanion && (
             <div
               style={{
@@ -140,7 +130,6 @@ export default function HomePage() {
             >
               <p style={{ marginTop: 0 }}>Quem vai com você?</p>
 
-              {/* Partner and children checkboxes */}
               <div style={{ marginBottom: "12px" }}>
                 <label style={{ display: "block", marginBottom: "4px" }}>
                   <input
@@ -163,7 +152,6 @@ export default function HomePage() {
                 </label>
               </div>
 
-              {/* Children count */}
               {companionChildren && (
                 <div>
                   <label
